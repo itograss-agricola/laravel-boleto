@@ -136,10 +136,8 @@ class Vortx extends AbstractBoleto implements BoletoContract
         }
 
         $campoLivre = Util::numberFormatGeral($this->getAgencia(), 4);
-        $campoLivre .= Util::numberFormatGeral($this->getCarteira(), 2);
-        $campoLivre .= Util::numberFormatGeral($this->getNumero(), 11);
-        $campoLivre .= Util::numberFormatGeral($this->getConta(), 7);
-        $campoLivre .= '0';
+        $campoLivre .= Util::numberFormatGeral($this->getConta(), 10);
+        $campoLivre .= Util::numberFormatGeral(substr($this->getNossoNumeroBoleto(), 0, 11), 11);
 
         return $this->campoLivre = $campoLivre;
     }
