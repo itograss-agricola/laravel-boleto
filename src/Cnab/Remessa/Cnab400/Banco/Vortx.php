@@ -8,7 +8,7 @@ use Eduardokum\LaravelBoleto\Cnab\Remessa\Cnab400\AbstractRemessa;
 use Eduardokum\LaravelBoleto\Contracts\Boleto\Boleto as BoletoContract;
 use Eduardokum\LaravelBoleto\Contracts\Cnab\Remessa as RemessaContract;
 
-class Grafeno extends AbstractRemessa implements RemessaContract
+class Vortx extends AbstractRemessa implements RemessaContract
 {
     const ESPECIE_DUPLICATA = '01';
     const ESPECIE_NOTA_PROMISSORIA = '02';
@@ -30,7 +30,7 @@ class Grafeno extends AbstractRemessa implements RemessaContract
     const OCORRENCIA_PEDIDO_PROTESTO = '09';
     const OCORRENCIA_ALT_NFE = '10';
     const OCORRENCIA_SUSTAR_PROTESTO_BAIXAR_TITULO = '19';
-    const OCORRENCIA_GRAFENO_TITULARIDADE = '23';
+    const OCORRENCIA_VORTX_TITULARIDADE = '23';
 
     // INSTRUCAO
     const INSTRUCAO_SEM = '00';
@@ -48,7 +48,7 @@ class Grafeno extends AbstractRemessa implements RemessaContract
      *
      * @var string
      */
-    protected $codigoBanco = BoletoContract::COD_BANCO_GRAFENO;
+    protected $codigoBanco = BoletoContract::COD_BANCO_VORTX;
 
     /**
      * Define as carteiras disponíveis para cada banco
@@ -86,7 +86,7 @@ class Grafeno extends AbstractRemessa implements RemessaContract
      *
      * @param mixed $convenio
      *
-     * @return Grafeno
+     * @return Vortx
      */
     public function setConvenio($convenio)
     {
@@ -96,7 +96,7 @@ class Grafeno extends AbstractRemessa implements RemessaContract
     }
 
     /**
-     * @return Grafeno
+     * @return Vortx
      * @throws ValidationException
      */
     protected function header()
@@ -111,7 +111,7 @@ class Grafeno extends AbstractRemessa implements RemessaContract
         $this->add(27, 46, Util::formatCnab('9', Util::numberFormatGeral($this->getConta(), 8), 20));
         $this->add(47, 76, Util::formatCnab('X', $this->getBeneficiario()->getNome(), 30));
         $this->add(77, 79, $this->getCodigoBanco());
-        $this->add(80, 94, Util::formatCnab('X', 'BMP MONEY PLUS', 15));
+        $this->add(80, 94, Util::formatCnab('X', 'VORTX DTVM', 15));
         $this->add(95, 100, $this->getDataRemessa('dmy'));
         $this->add(101, 108, '');
         $this->add(109, 110, Util::formatCnab('X', 'MX', 2));
@@ -123,9 +123,9 @@ class Grafeno extends AbstractRemessa implements RemessaContract
     }
 
     /**
-     * @param \Eduardokum\LaravelBoleto\Boleto\Banco\Grafeno $boleto
+     * @param \Eduardokum\LaravelBoleto\Boleto\Banco\Vortx $boleto
      *
-     * @return Grafeno
+     * @return Vortx
      * @throws ValidationException
      */
     public function addBoleto(BoletoContract $boleto)
@@ -208,7 +208,7 @@ class Grafeno extends AbstractRemessa implements RemessaContract
     }
 
     /**
-     * @return Grafeno
+     * @return Vortx
      * @throws ValidationException
      */
     protected function trailer()
@@ -225,7 +225,7 @@ class Grafeno extends AbstractRemessa implements RemessaContract
     public function nomeSugerido()
     {
         //          CGDDMMYYYY??????????.rem
-        //          CG - Serviço utilizado pelo cliente, atualmente fixado em Cobrança Grafeno
+        //          CG - Serviço utilizado pelo cliente, atualmente fixado em Cobrança Vortx
         //          DDMMYYYY - Dia Mês Ano Geração do arquivo
         //          ?????????? - Primeiros 10 dígitos da razão social da conta do cliente
         //          .rem - Extensão do arquivo remessa

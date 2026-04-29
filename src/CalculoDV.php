@@ -239,7 +239,6 @@ class CalculoDV
         return Util::modulo11(Util::numberFormatGeral($nossoNumero, 10));
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | 084 - Sisprime
@@ -260,13 +259,14 @@ class CalculoDV
     public static function sisprimeNossoNumero($nossoNumero)
     {
         $dv = Util::modulo11($nossoNumero, 2, 7, 1);
-        if($dv == 1){
+        if ($dv == 1){
             $dv = 'P';
-        }else if($dv == 0){
+        }elseif ($dv == 0){
             $dv = 0;
-        }else{
+        }else {
             $dv = 11 - $dv;
         }
+
         return $dv;
     }
 
@@ -386,6 +386,17 @@ class CalculoDV
     */
 
     public static function grafenoNossoNumero($carteira, $nossoNumero)
+    {
+        return Util::modulo11(Util::numberFormatGeral($carteira, 2) . Util::numberFormatGeral($nossoNumero, 11), 2, 7, 0, 'P');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 310 - Vortx
+    |--------------------------------------------------------------------------
+    */
+
+    public static function vortxNossoNumero($carteira, $nossoNumero)
     {
         return Util::modulo11(Util::numberFormatGeral($carteira, 2) . Util::numberFormatGeral($nossoNumero, 11), 2, 7, 0, 'P');
     }
