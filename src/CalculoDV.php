@@ -387,7 +387,7 @@ class CalculoDV
 
     public static function grafenoNossoNumero($carteira, $nossoNumero)
     {
-        return Util::modulo11(Util::numberFormatGeral($carteira, 2) . Util::numberFormatGeral($nossoNumero, 11), 2, 7, 0, 'P');
+        return Util::modulo11(Util::numberFormatGeral($carteira, 2) . Util::numberFormatGeral($nossoNumero, 11), 2, 7, 0);
     }
 
     /*
@@ -398,7 +398,7 @@ class CalculoDV
 
     public static function vortxNossoNumero($carteira, $nossoNumero)
     {
-        return Util::modulo11(Util::numberFormatGeral($carteira, 2) . Util::numberFormatGeral($nossoNumero, 11), 2, 7, 0, 'P');
+        return Util::modulo11(Util::numberFormatGeral($carteira, 2) . Util::numberFormatGeral($nossoNumero, 11), 2, 7, 0);
     }
 
     /*
