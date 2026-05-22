@@ -6,6 +6,7 @@ use Exception;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Eduardokum\LaravelBoleto\Util;
+use Illuminate\Support\Facades\Cache;
 use Eduardokum\LaravelBoleto\Api\AbstractAPI;
 use Eduardokum\LaravelBoleto\Api\Exception\CurlException;
 use Eduardokum\LaravelBoleto\Api\Exception\HttpException;
@@ -57,6 +58,16 @@ class Inter extends AbstractAPI
             'scope'         => 'boleto-cobranca.read boleto-cobranca.write',
             'grant_type'    => 'client_credentials',
         ], true)->body;
+
+         $this->setTokenStore(function ($token = null) use ($grant) {
+            if ($token !== null) {
+                Cache::put('inter_oauth_token', $token, $grant->expires_in ?: 3600);
+
+                return;
+            }
+
+            return Cache::get('inter_oauth_token');
+        });
 
         return $this->setAccessToken('Bearer ' . $grant->access_token);
     }

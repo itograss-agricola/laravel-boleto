@@ -39,6 +39,8 @@ abstract class AbstractAPI implements Api
 
     protected $access_token = null;
 
+    protected $tokenStore = null;
+
     protected $debug = false;
 
     protected $log = null;
@@ -332,10 +334,26 @@ abstract class AbstractAPI implements Api
     }
 
     /**
+     * @param callable $callback fn($token = null) — sem argumento lê, com argumento salva
+     *
+     * @return $this
+     */
+    public function setTokenStore(callable $callback)
+    {
+        $this->tokenStore = $callback;
+
+        return $this;
+    }
+
+    /**
      * @return null
      */
     public function getAccessToken()
     {
+        if ($this->tokenStore) {
+            return ($this->tokenStore)();
+        }
+
         return $this->access_token;
     }
 
@@ -346,6 +364,12 @@ abstract class AbstractAPI implements Api
      */
     public function setAccessToken($access_token)
     {
+        if ($this->tokenStore) {
+            ($this->tokenStore)($access_token);
+
+            return $this;
+        }
+
         $this->access_token = $access_token;
 
         return $this;
