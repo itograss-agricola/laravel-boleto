@@ -5,6 +5,7 @@ namespace Eduardokum\LaravelBoleto\Api\Banco;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Eduardokum\LaravelBoleto\Api\AbstractAPI;
 use Eduardokum\LaravelBoleto\Api\Exception\CurlException;
 use Eduardokum\LaravelBoleto\Api\Exception\HttpException;
@@ -52,6 +53,16 @@ class Inter extends AbstractAPI
             'scope'         => 'boleto-cobranca.read boleto-cobranca.write',
             'grant_type'    => 'client_credentials',
         ], true)->body;
+
+        $this->setTokenStore(function ($token = null) use ($grant) {
+            if ($token !== null) {
+                Cache::put('inter_token', $token, $grant->expires_in);
+
+                return;
+            }
+
+            return Cache::get('inter_token_' . $this->getClientId());
+        });
 
         return $this->setAccessToken('Bearer ' . $grant->access_token);
     }
