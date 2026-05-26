@@ -56,7 +56,7 @@ class Inter extends AbstractAPI
 
         $this->setTokenStore(function ($token = null) use ($grant) {
             if ($token !== null) {
-                Cache::put('inter_token', $token, $grant->expires_in);
+                Cache::put('inter_token' . $this->getClientId(), $token, $grant->expires_in);
 
                 return;
             }
