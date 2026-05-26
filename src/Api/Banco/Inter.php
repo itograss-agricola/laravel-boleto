@@ -101,7 +101,7 @@ class Inter extends AbstractAPI
         $show = $this->retrieveID($retorno->body->codigoSolicitacao);
         $boleto->setID($show->cobranca->codigoSolicitacao);
         $boleto->setNossoNumero($show->boleto->nossoNumero);
-        if ($show->pix) {
+        if (isset($show->pix)) {
             $boleto->setPixQrCode($show->pix->pixCopiaECola);
         }
 
