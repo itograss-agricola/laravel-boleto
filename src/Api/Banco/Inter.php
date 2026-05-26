@@ -282,7 +282,7 @@ class Inter extends AbstractAPI
      * @throws UnauthorizedException
      * @throws ValidationException
      */
-    public function cancelID($id, $motivo)
+    public function cancelID($id, $motivo = 'ACERTOS')
     {
         if ($this->version != 3) {
             throw new ValidationException('Versão 1 e 2 da API somente cancela boleto pelo nosso número');

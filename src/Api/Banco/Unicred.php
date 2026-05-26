@@ -15,8 +15,8 @@ class Unicred extends AbstractAPI
 {
     protected $baseUrl = 'https://api.e-unicred.com.br/';
 
-    /** 
-     * @var int $version
+    /**
+     * @var int
      **/
     private $version = 2;
 
@@ -54,7 +54,7 @@ class Unicred extends AbstractAPI
         'apiKey',
     ];
 
-    public function __construct($params=[])
+    public function __construct($params = [])
     {
         if (isset($params['versao']) && $params['versao'] != 2) {
             throw new ValidationException('Somente Versão 2 da Api homologada');
@@ -129,7 +129,7 @@ class Unicred extends AbstractAPI
 
     /**
      * @return Unicred
-     * 
+     *
      * @throws CurlException
      * @throws HttpException
      * @throws UnauthorizedException
@@ -141,12 +141,12 @@ class Unicred extends AbstractAPI
         }
 
         $grant = $this->post($this->url('auth'),
-            $post=[
-                'nomeUsuario'     => $this->getUsuario(),
-                'senha'           => $this->getSenha(),
+            $post = [
+                'nomeUsuario' => $this->getUsuario(),
+                'senha'       => $this->getSenha(),
             ],
-            $raw=false,
-            $clear=false
+            $raw = false,
+            $clear = false
         )->body;
 
         return $this->setAccessToken('Bearer ' . $grant->accessToken);
@@ -160,8 +160,8 @@ class Unicred extends AbstractAPI
         if ($this->version == 2) {
             return array_filter([
                 'Authorization' => $this->getAccessToken(),
-                'Cooperativa' => $this->getCooperativa(),
-                'apiKey' => $this->getApiKey()
+                'Cooperativa'   => $this->getCooperativa(),
+                'apiKey'        => $this->getApiKey(),
             ]);
         }
 
@@ -207,11 +207,11 @@ class Unicred extends AbstractAPI
      * @return mixed
      * @throws ValidationException
      */
-    public function retrieveList($inputedParams=[])
+    public function retrieveList($inputedParams = [])
     {
         throw new ValidationException('Método não disponível no banco');
     }
-    
+
     /**
      * @param $nossoNumero
      *
@@ -225,7 +225,7 @@ class Unicred extends AbstractAPI
 
     /**
      * @param string $id
-     * 
+     *
      * @return mixed
      * @throws CurlException
      * @throws HttpException
@@ -262,7 +262,7 @@ class Unicred extends AbstractAPI
      * @return mixed
      * @throws ValidationException
      */
-    public function cancelID($id, $motivo)
+    public function cancelID($id, $motivo = 'ACERTOS')
     {
         throw new ValidationException('Método não disponível no banco');
     }
@@ -277,7 +277,7 @@ class Unicred extends AbstractAPI
     {
         throw new ValidationException('Método não disponível no banco');
     }
-    
+
     /**
      * @param $id
      *
@@ -321,11 +321,11 @@ class Unicred extends AbstractAPI
 
         $aUrls = [
             2 => [
-                'create'  => "cobranca/v2/beneficiarios/{$codigoBeneficiario}/titulos",
-                'show'    => "cobranca/v2/beneficiarios/{$codigoBeneficiario}/titulos/{$param}/status",
-                'pdf'     => "cobranca/v2/beneficiarios/{$codigoBeneficiario}/titulos/{$param}",
-                'auth'    => 'oauth2/v2/grant-token',
-            ]
+                'create' => "cobranca/v2/beneficiarios/{$codigoBeneficiario}/titulos",
+                'show'   => "cobranca/v2/beneficiarios/{$codigoBeneficiario}/titulos/{$param}/status",
+                'pdf'    => "cobranca/v2/beneficiarios/{$codigoBeneficiario}/titulos/{$param}",
+                'auth'   => 'oauth2/v2/grant-token',
+            ],
         ];
 
         return Arr::get($aUrls, "{$this->version}.{$type}");
