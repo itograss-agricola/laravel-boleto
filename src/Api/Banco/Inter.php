@@ -5,7 +5,6 @@ namespace Eduardokum\LaravelBoleto\Api\Banco;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cache;
 use Eduardokum\LaravelBoleto\Api\AbstractAPI;
 use Eduardokum\LaravelBoleto\Api\Exception\CurlException;
 use Eduardokum\LaravelBoleto\Api\Exception\HttpException;
@@ -39,6 +38,7 @@ class Inter extends AbstractAPI
         if (in_array($params['version'], [1, 2])) {
             throw new ValidationException('Versão 1 e 2 da API foi descontinuada');
         }
+        $this->setTokenStore(AbstractAPI::fileTokenStore(storage_path('inter_token.json')));
         parent::__construct($params);
     }
 
@@ -54,17 +54,7 @@ class Inter extends AbstractAPI
             'grant_type'    => 'client_credentials',
         ], true)->body;
 
-        $this->setTokenStore(function ($token = null) use ($grant) {
-            if ($token !== null) {
-                Cache::put('inter_token' . $this->getClientId(), $token, $grant->expires_in);
-
-                return;
-            }
-
-            return Cache::get('inter_token_' . $this->getClientId());
-        });
-
-        return $this->setAccessToken('Bearer ' . $grant->access_token);
+        return $this->setAccessToken('Bearer ' . $grant->access_token, $grant->expires_in);
     }
 
     /**

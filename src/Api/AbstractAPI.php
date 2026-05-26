@@ -346,6 +346,27 @@ abstract class AbstractAPI implements Api
     }
 
     /**
+     * Token store baseado em arquivo — sem dependências externas.
+     * $ttl em segundos (padrão 3500 ≈ 1h)
+     */
+    public static function fileTokenStore(string $path): callable
+    {
+        return function ($token = null, $ttl = 3500) use ($path) {
+            if ($token !== null) {
+                file_put_contents($path, json_encode(['t' => $token, 'e' => time() + $ttl]));
+
+                return;
+            }
+            if (! file_exists($path)) {
+                return null;
+            }
+            $data = json_decode(file_get_contents($path), true);
+
+            return ($data['e'] ?? 0) > time() ? $data['t'] : null;
+        };
+    }
+
+    /**
      * @param callable $callback fn($token = null) — sem argumento lê, com argumento salva
      *
      * @return $this
@@ -374,10 +395,10 @@ abstract class AbstractAPI implements Api
      *
      * @return AbstractAPI
      */
-    public function setAccessToken($access_token)
+    public function setAccessToken($access_token, $ttl = 3500)
     {
         if ($this->tokenStore) {
-            ($this->tokenStore)($access_token);
+            ($this->tokenStore)($access_token, $ttl);
 
             return $this;
         }
