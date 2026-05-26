@@ -1941,7 +1941,7 @@ abstract class AbstractBoleto implements BoletoContract
     }
 
     /**
-     * @return null
+     * @return ?string
      */
     public function getPixChave()
     {
@@ -2186,6 +2186,41 @@ abstract class AbstractBoleto implements BoletoContract
         }
 
         return $this->getPixQrCode();
+    }
+
+    /**
+     * Converte uma string PIX copia e cola e popula pixChave, pixChaveTipo e pixQrCode.
+     *
+     * @param string $pixCopiaECola
+     * @return $this
+     * @throws ValidationException
+     */
+    public function convertPixCopiaECola($pixCopiaECola)
+    {
+        $decoded = Util::decodePixCopiaECola($pixCopiaECola);
+
+        $merchantInfo = $decoded['26'] ?? null;
+        if (! $merchantInfo) {
+            return $this;
+        }
+
+        // Campo 01 = chave estática, campo 25 = URL dinâmica
+        $chave = $merchantInfo['01'] ?? $merchantInfo['25'] ?? null;
+        if (! $chave) {
+            return $this;
+        }
+
+        $tipo = Util::tipoChavePix($chave);
+        if (! $tipo) {
+            // PIX dinâmico (URL): sem tipo de chave convencional
+            $tipo = self::TIPO_CHAVEPIX_ALEATORIA;
+        }
+
+        $this->pixChave = $chave;
+        $this->pixChaveTipo = $tipo;
+        $this->pixQrCode = $pixCopiaECola;
+
+        return $this;
     }
 
     /**

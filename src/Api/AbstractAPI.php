@@ -358,7 +358,7 @@ abstract class AbstractAPI implements Api
     }
 
     /**
-     * @param $access_token
+     * @param string $access_token
      *
      * @return AbstractAPI
      */
