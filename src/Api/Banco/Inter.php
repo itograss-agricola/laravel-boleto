@@ -98,11 +98,11 @@ class Inter extends AbstractAPI
         $data = $boleto->toAPI();
         $retorno = $this->oAuth2()->post($this->url('create'), $data);
 
-        $show = $this->oAuth2()->get($this->url('show', $retorno->body->codigoCobranca));
-        $boleto->setID($show->body->cobranca->codigoCobranca);
-        $boleto->setNossoNumero($show->body->boleto->nossoNumero);
-        if ($show->body->pix) {
-            $boleto->setPixQrCode($show->body->pix->pixCopiaECola);
+        $show = $this->retrieveID($retorno->body->codigoCobranca);
+        $boleto->setID($show->cobranca->codigoCobranca);
+        $boleto->setNossoNumero($show->boleto->nossoNumero);
+        if ($show->pix) {
+            $boleto->setPixQrCode($show->pix->pixCopiaECola);
         }
 
         return $boleto;

@@ -130,13 +130,17 @@ abstract class AbstractAPI implements Api
 
     public function retrieve(BoletoAPIContract $boleto)
     {
+        if ($boleto->getID()) {
+            return $this->retrieveID($boleto->getID());
+        }
+
         return $this->retrieveNossoNumero($boleto->getNossoNumero());
     }
 
     public function cancel(BoletoAPIContract $boleto, $motivo = null)
     {
         if ($boleto->getID()) {
-            return $this->cancelID($boleto->getNossoNumero(), $motivo);
+            return $this->cancelID($boleto->getID(), $motivo);
         }
 
         return $this->cancelNossoNumero($boleto->getNossoNumero(), $motivo);
@@ -144,6 +148,10 @@ abstract class AbstractAPI implements Api
 
     public function getPdf(BoletoAPIContract $boleto)
     {
+        if ($boleto->getID()) {
+            return $this->getPdfID($boleto->getID());
+        }
+
         return $this->getPdfNossoNumero($boleto->getNossoNumero());
     }
 
