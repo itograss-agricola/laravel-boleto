@@ -179,48 +179,28 @@ class Inter extends AbstractBoleto implements BoletoAPIContract
         } catch (\Exception $e) {
         }
 
-        $desconto = [
-            'codigo' => 'NAOTEMDESCONTO',
-            'data'   => '',
-            'taxa'   => 0,
-            'valor'  => 0,
-        ];
+        $desconto = null;
         if ($this->getDesconto()) {
             $desconto = [
-                'codigo' => 'VALORFIXODATAINFORMADA',
-                'data'   => $this->getDataDesconto()->format('Y-m-d'),
-                'taxa'   => 0,
-                'valor'  => Util::nFloat($this->getDesconto()),
+                'codigo'         => 'VALORFIXODATAINFORMADA',
+                'quantidadeDias' => $this->getDataDesconto()->diffInDays($this->getDataVencimento()),
+                'valor'          => Util::nFloat($this->getDesconto()),
             ];
         }
 
-        $multa = [
-            'codigo' => 'NAOTEMMULTA',
-            'data'   => '',
-            'taxa'   => 0,
-            'valor'  => 0,
-        ];
+        $multa = null;
         if ($this->getMulta()) {
             $multa = [
                 'codigo' => 'PERCENTUAL',
-                'data'   => ($this->getDataVencimento()->copy())->addDay()->format('Y-m-d'),
                 'taxa'   => Util::nFloat($this->getMulta()),
-                'valor'  => 0,
             ];
         }
 
-        $mora = [
-            'codigo' => 'ISENTO',
-            'data'   => '',
-            'taxa'   => 0,
-            'valor'  => 0,
-        ];
+        $mora = null;
         if ($this->getJuros()) {
             $mora = [
                 'codigo' => 'TAXAMENSAL',
-                'data'   => ($this->getDataVencimento()->copy())->addDays($this->getJurosApos() > 0 ? $this->getJurosApos() : 1)->format('Y-m-d'),
                 'taxa'   => Util::nFloat($this->getJuros()),
-                'valor'  => 0,
             ];
         }
 
@@ -247,20 +227,10 @@ class Inter extends AbstractBoleto implements BoletoAPIContract
                 'bairro'     => $this->getPagador()->getBairro(),
             ],
             'formasRecebimento' => $formasRecebimento,
-            'beneficiarioFinal' => [
-                'cpfCnpj'    => sprintf('%014s', Util::onlyNumbers($this->getBeneficiario()->getDocumento())),
-                'tipoPessoa' => $this->getBeneficiario()->getTipoDocumento(),
-                'nome'       => $this->getBeneficiario()->getNome(),
-                'endereco'   => $this->getBeneficiario()->getEndereco(),
-                'bairro'     => $this->getBeneficiario()->getBairro(),
-                'cidade'     => $this->getBeneficiario()->getCidade(),
-                'uf'         => $this->getBeneficiario()->getUf(),
-                'cep'        => $this->getBeneficiario()->getCidade(),
-            ],
-            'mensagem' => $mensagem,
-            'desconto' => $desconto,
-            'multa'    => $multa,
-            'mora'     => $mora,
+            'mensagem'          => $mensagem,
+            'desconto'          => $desconto,
+            'multa'             => $multa,
+            'mora'              => $mora,
         ]);
     }
 
