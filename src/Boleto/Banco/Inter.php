@@ -176,7 +176,7 @@ class Inter extends AbstractBoleto implements BoletoAPIContract
             if ($this->validarPix()) {
                 $formasRecebimento[] = 'PIX';
             }
-        } catch (\Throwable) {
+        } catch (\Exception $e) {
         }
 
         $desconto = [
