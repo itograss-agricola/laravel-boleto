@@ -171,16 +171,13 @@ class Inter extends AbstractBoleto implements BoletoAPIContract
      */
     public function toAPI()
     {
-        $enderecoSplit = function ($endereco) {
-            $endereco = explode(',', $endereco);
-
-            return [
-                'endereco' => $endereco[0],
-                'numero'   => array_key_exists(1, $endereco)
-                    ? Util::onlyNumbers(explode(' ', trim($endereco[1]))[0])
-                    : 0,
-            ];
-        };
+        $formasRecebimento[] = 'BOLETO';
+        try {
+            if ($this->validarPix()) {
+                $formasRecebimento[] = 'PIX';
+            }
+        } catch (\Throwable) {
+        }
 
         $desconto = [
             'codigo' => 'NAOTEMDESCONTO',
@@ -234,37 +231,36 @@ class Inter extends AbstractBoleto implements BoletoAPIContract
         }
 
         return array_filter([
-            'seuNumero'         => $this->getNumero(),
+            'seuNumero'      => $this->getNumero(),
+            'valorNominal'   => Util::nFloat($this->getValor(), 2, false),
+            'dataVencimento' => $this->getDataVencimento()->format('Y-m-d'),
+            'numDiasAgenda'  => min(60, $this->getDiasBaixaAutomatica()),
+            'pagador'        => [
+                'cpfCnpj'    => Util::onlyNumbers($this->getPagador()->getDocumento()),
+                'tipoPessoa' => strlen(Util::onlyNumbers($this->getPagador()->getDocumento())) == 14 ? 'JURIDICA' : 'FISICA',
+                'nome'       => $this->getPagador()->getNome(),
+                'endereco'   => $this->getPagador()->getEndereco(),
+                'cidade'     => $this->getPagador()->getCidade(),
+                'cep'        => Util::onlyNumbers($this->getPagador()->getCep()),
+                'uf'         => $this->getPagador()->getUf(),
+                'email'      => $this->getPagador()->getEmail(),
+                'bairro'     => $this->getPagador()->getBairro(),
+            ],
+            'formasRecebimento' => $formasRecebimento,
             'beneficiarioFinal' => [
                 'cpfCnpj'    => sprintf('%014s', Util::onlyNumbers($this->getBeneficiario()->getDocumento())),
                 'tipoPessoa' => $this->getBeneficiario()->getTipoDocumento(),
                 'nome'       => $this->getBeneficiario()->getNome(),
-                'endereco'   => $enderecoSplit($this->getBeneficiario()->getEndereco())['endereco'],
-                'numero'     => $enderecoSplit($this->getBeneficiario()->getEndereco())['numero'],
+                'endereco'   => $this->getBeneficiario()->getEndereco(),
                 'bairro'     => $this->getBeneficiario()->getBairro(),
                 'cidade'     => $this->getBeneficiario()->getCidade(),
                 'uf'         => $this->getBeneficiario()->getUf(),
                 'cep'        => $this->getBeneficiario()->getCidade(),
             ],
-            'valorNominal'   => Util::nFloat($this->getValor(), 2, false),
-            'dataEmissao'    => $this->getDataDocumento()->format('Y-m-d'),
-            'dataVencimento' => $this->getDataVencimento()->format('Y-m-d'),
-            'numDiasAgenda'  => $this->getDiasBaixaAutomatica(),
-            'mensagem'       => $mensagem,
-            'desconto'       => $desconto,
-            'multa'          => $multa,
-            'mora'           => $mora,
-            'pagador'        => [
-                'tipoPessoa' => strlen(Util::onlyNumbers($this->getPagador()->getDocumento())) == 14 ? 'JURIDICA' : 'FISICA',
-                'nome'       => $this->getPagador()->getNome(),
-                'endereco'   => $enderecoSplit($this->getPagador()->getEndereco())['endereco'],
-                'numero'     => $enderecoSplit($this->getPagador()->getEndereco())['numero'],
-                'bairro'     => $this->getPagador()->getBairro(),
-                'cep'        => Util::onlyNumbers($this->getPagador()->getCep()),
-                'uf'         => $this->getPagador()->getUf(),
-                'cidade'     => $this->getPagador()->getCidade(),
-                'cnpjCpf'    => Util::onlyNumbers($this->getPagador()->getDocumento()),
-            ],
+            'mensagem' => $mensagem,
+            'desconto' => $desconto,
+            'multa'    => $multa,
+            'mora'     => $mora,
         ]);
     }
 
