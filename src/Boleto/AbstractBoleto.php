@@ -2305,6 +2305,7 @@ abstract class AbstractBoleto implements BoletoContract
         $this->validarPix();
 
         return array_merge([
+            'id'              => $this->getID(),
             'linha_digitavel' => $linha_digitavel,
             'codigo_barras'   => $codigo_barras,
             'beneficiario'    => [
