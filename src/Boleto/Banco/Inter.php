@@ -183,47 +183,47 @@ class Inter extends AbstractBoleto implements BoletoAPIContract
         };
 
         $desconto = [
-            'codigoDesconto' => 'NAOTEMDESCONTO',
-            'data'           => '',
-            'taxa'           => 0,
-            'valor'          => 0,
+            'codigo' => 'NAOTEMDESCONTO',
+            'data'   => '',
+            'taxa'   => 0,
+            'valor'  => 0,
         ];
         if ($this->getDesconto()) {
             $desconto = [
-                'codigoDesconto' => 'VALORFIXODATAINFORMADA',
-                'data'           => $this->getDataDesconto()->format('Y-m-d'),
-                'taxa'           => 0,
-                'valor'          => Util::nFloat($this->getDesconto()),
+                'codigo' => 'VALORFIXODATAINFORMADA',
+                'data'   => $this->getDataDesconto()->format('Y-m-d'),
+                'taxa'   => 0,
+                'valor'  => Util::nFloat($this->getDesconto()),
             ];
         }
 
         $multa = [
-            'codigoMulta' => 'NAOTEMMULTA',
-            'data'        => '',
-            'taxa'        => 0,
-            'valor'       => 0,
+            'codigo' => 'NAOTEMMULTA',
+            'data'   => '',
+            'taxa'   => 0,
+            'valor'  => 0,
         ];
         if ($this->getMulta()) {
             $multa = [
-                'codigoMulta' => 'PERCENTUAL',
-                'data'        => ($this->getDataVencimento()->copy())->addDay()->format('Y-m-d'),
-                'taxa'        => Util::nFloat($this->getMulta()),
-                'valor'       => 0,
+                'codigo' => 'PERCENTUAL',
+                'data'   => ($this->getDataVencimento()->copy())->addDay()->format('Y-m-d'),
+                'taxa'   => Util::nFloat($this->getMulta()),
+                'valor'  => 0,
             ];
         }
 
         $mora = [
-            'codigoMora' => 'ISENTO',
-            'data'       => '',
-            'taxa'       => 0,
-            'valor'      => 0,
+            'codigo' => 'ISENTO',
+            'data'   => '',
+            'taxa'   => 0,
+            'valor'  => 0,
         ];
         if ($this->getJuros()) {
             $mora = [
-                'codigoMora' => 'TAXAMENSAL',
-                'data'       => ($this->getDataVencimento()->copy())->addDays($this->getJurosApos() > 0 ? $this->getJurosApos() : 1)->format('Y-m-d'),
-                'taxa'       => Util::nFloat($this->getJuros()),
-                'valor'      => 0,
+                'codigo' => 'TAXAMENSAL',
+                'data'   => ($this->getDataVencimento()->copy())->addDays($this->getJurosApos() > 0 ? $this->getJurosApos() : 1)->format('Y-m-d'),
+                'taxa'   => Util::nFloat($this->getJuros()),
+                'valor'  => 0,
             ];
         }
 
