@@ -107,9 +107,9 @@ abstract class AbstractAPI implements Api
 
     abstract public function retrieveID($id);
 
-    abstract public function cancelNossoNumero($nossoNumero, $motivo);
+    abstract public function cancelNossoNumero($nossoNumero, $motivo = null);
 
-    abstract public function cancelID($id, $motivo);
+    abstract public function cancelID($id, $motivo = null);
 
     abstract public function retrieveList($inputedParams = []);
 
@@ -133,8 +133,12 @@ abstract class AbstractAPI implements Api
         return $this->retrieveNossoNumero($boleto->getNossoNumero());
     }
 
-    public function cancel(BoletoAPIContract $boleto, $motivo)
+    public function cancel(BoletoAPIContract $boleto, $motivo = null)
     {
+        if ($boleto->getID()) {
+            return $this->cancelID($boleto->getNossoNumero(), $motivo);
+        }
+
         return $this->cancelNossoNumero($boleto->getNossoNumero(), $motivo);
     }
 

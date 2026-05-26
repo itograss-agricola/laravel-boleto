@@ -12,9 +12,9 @@ interface Api
 
     public function retrieveID($id);
 
-    public function cancelNossoNumero($nossoNumero, $motivo);
+    public function cancelNossoNumero($nossoNumero, $motivo = null);
 
-    public function cancelID($id, $motivo);
+    public function cancelID($id, $motivo = null);
 
     public function retrieveList($inputedParams = []);
 
@@ -26,7 +26,7 @@ interface Api
 
     public function retrieve(BoletoAPI $boleto);
 
-    public function cancel(BoletoAPI $boleto, $motivo);
+    public function cancel(BoletoAPI $boleto, $motivo = null);
 
     public function getPdf(BoletoAPI $boleto);
 
