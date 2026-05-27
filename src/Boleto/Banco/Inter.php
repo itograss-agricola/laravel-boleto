@@ -271,7 +271,7 @@ class Inter extends AbstractBoleto implements BoletoAPIContract
         $dateUS = preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}.*?/', Arr::get($boleto, 'cobranca.dataSituacao'));
 
         $inter = new self(array_merge(array_filter([
-            'valorRecebido' => Arr::get($boleto, 'cobranca.valorTotalRecebimento'),
+            'valorRecebido' => Arr::get($boleto, 'cobranca.valorTotalRecebido'),
             'situacao'      => Arr::get($aSituacao, $boleto['cobranca']['situacao'], $boleto['cobranca']['situacao']),
             'dataSituacao'  => Arr::get($boleto, 'cobranca.dataSituacao')
                 ? Carbon::createFromFormat($dateUS ? 'Y-m-d' : 'd/m/Y', Arr::get($boleto, 'cobranca.dataSituacao'))

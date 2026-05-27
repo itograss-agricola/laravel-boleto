@@ -5,6 +5,7 @@ namespace Eduardokum\LaravelBoleto\Api\Banco;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Eduardokum\LaravelBoleto\Util;
 use Eduardokum\LaravelBoleto\Api\AbstractAPI;
 use Eduardokum\LaravelBoleto\Api\Exception\CurlException;
 use Eduardokum\LaravelBoleto\Api\Exception\HttpException;
@@ -38,7 +39,11 @@ class Inter extends AbstractAPI
         if (in_array($params['version'], [1, 2])) {
             throw new ValidationException('Versão 1 e 2 da API foi descontinuada');
         }
-        $this->setTokenStore(AbstractAPI::fileTokenStore(storage_path('inter_token.json')));
+        $this->setTokenStore(
+            AbstractAPI::fileTokenStore(
+                storage_path(sprintf('app/api_inter_token_%s.json', Util::onlyAlphanumber(Arr::get($params, 'conta'))))
+            )
+        );
         parent::__construct($params);
     }
 
@@ -98,13 +103,20 @@ class Inter extends AbstractAPI
     {
         $data = $boleto->toAPI();
         $retorno = $this->oAuth2()->post($this->url('create'), $data);
+        $boleto->setID($retorno->body->codigoSolicitacao);
 
-        $show = $this->retrieveID($retorno->body->codigoSolicitacao);
-        $boleto->setID($show->cobranca->codigoSolicitacao);
-        $boleto->setNossoNumero($show->boleto->nossoNumero);
-        if (isset($show->pix)) {
-            $boleto->setPixQrCode($show->pix->pixCopiaECola);
-        }
+        do {
+            $show = $this->retrieveID($boleto->getID());
+            if ($show->cobranca->situacao != 'A_RECEBER') {
+                usleep(500000); // ~0.5s
+                continue;
+            }
+
+            $boleto->setNossoNumero($show->boleto->nossoNumero);
+            if (isset($show->pix)) {
+                $boleto->setPixQrCode($show->pix->pixCopiaECola);
+            }
+        } while ($show->cobranca->situacao != 'A_RECEBER');
 
         return $boleto;
     }
