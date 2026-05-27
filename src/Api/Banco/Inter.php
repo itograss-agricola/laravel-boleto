@@ -46,7 +46,7 @@ class Inter extends AbstractAPI
         }
         $this->setTokenStore(
             AbstractAPI::fileTokenStore(
-                storage_path(sprintf('app/laravel_boleto/api_inter_token_%s.json', Util::onlyAlphanumber(Arr::get($params, 'cliente_id'))))
+                storage_path(sprintf('app/laravel_boleto/api_inter_token_%s.json', Util::onlyAlphanumber(Arr::get($params, 'client_id'))))
             )
         );
         parent::__construct($params);
