@@ -42,7 +42,12 @@
     }
   },
   "config": {
-    "allow-plugins": true
+    "allow-plugins": true,
+    "policy": {
+      "advisories": {
+        "block": false
+      }
+    }
   },
   "scripts": {
     "php-cs-fixer-check": "vendor/bin/php-cs-fixer fix --diff --verbose --dry-run",
