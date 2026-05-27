@@ -6,6 +6,7 @@ use Exception;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Eduardokum\LaravelBoleto\Util;
+use Illuminate\Support\Facades\Storage;
 use Eduardokum\LaravelBoleto\Api\AbstractAPI;
 use Eduardokum\LaravelBoleto\Api\Exception\CurlException;
 use Eduardokum\LaravelBoleto\Api\Exception\HttpException;
@@ -39,9 +40,13 @@ class Inter extends AbstractAPI
         if (in_array($params['version'], [1, 2])) {
             throw new ValidationException('Versão 1 e 2 da API foi descontinuada');
         }
+
+        if (! Storage::exists('laravel_boleto')) {
+            Storage::makeDirectory('laravel_boleto');
+        }
         $this->setTokenStore(
             AbstractAPI::fileTokenStore(
-                storage_path(sprintf('laravel_boleto/api_inter_token_%s.json', Util::onlyAlphanumber(Arr::get($params, 'conta'))))
+                storage_path(sprintf('app/laravel_boleto/api_inter_token_%s.json', Util::onlyAlphanumber(Arr::get($params, 'cliente_id'))))
             )
         );
         parent::__construct($params);
