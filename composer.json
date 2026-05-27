@@ -45,7 +45,9 @@
     "allow-plugins": true,
     "policy": {
       "advisories": {
-        "block": false
+        "ignore": [
+          "laravel/framework"
+        ]
       }
     }
   },

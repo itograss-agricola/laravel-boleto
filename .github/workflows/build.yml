@@ -105,7 +105,7 @@ jobs:
       - name: Setup Laravel ${{ matrix.laravel }}
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-          composer update --prefer-stable --prefer-dist --no-interaction
+          composer update --prefer-dist --no-suggest --no-interaction
 
       - name: Run tests
         run: |
