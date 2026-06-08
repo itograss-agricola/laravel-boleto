@@ -1,0 +1,17 @@
+name: Block PR to master
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  block-pr-to-master:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Block pull requests targeting master
+        run: |
+          echo "Pull requests directly to master are not allowed."
+          echo "Please open the pull request against develop branch."
+          exit 1
