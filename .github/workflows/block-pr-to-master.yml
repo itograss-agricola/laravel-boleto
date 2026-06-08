@@ -2,16 +2,40 @@ name: Block PR to master
 
 on:
   pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
     branches:
       - master
 
+permissions:
+  pull-requests: write
+  issues: write
+
 jobs:
-  block-pr-to-master:
+  close-pr-to-master:
+    name: Close PR to master
     runs-on: ubuntu-latest
 
     steps:
-      - name: Block pull requests targeting master
-        run: |
-          echo "Pull requests directly to master are not allowed."
-          echo "Please open the pull request against develop branch."
-          exit 1
+      - name: Close pull request targeting master
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pullRequest = context.payload.pull_request;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pullRequest.number,
+              body: 'Pull requests directly to `master` are not allowed. Please open your PR against `develop` or the correct target branch.'
+            });
+
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pullRequest.number,
+              state: 'closed'
+            });
